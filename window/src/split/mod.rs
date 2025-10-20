@@ -7,10 +7,17 @@ use std::iter::repeat_n;
 use iter::SplitIter;
 use lines::Lines;
 
+use crate::Window;
+
 pub enum Split<L> {
 	Single(L),
 	Horizontal(Vec<L>),
 	Vertical(Vec<L>),
+}
+impl<C> From<Window<C>> for Split<Window<C>> {
+	fn from(value: Window<C>) -> Self {
+		Self::Single(value)
+	}
 }
 
 impl<L> Lines for Split<L>
@@ -22,7 +29,8 @@ where
 		match self {
 			Self::Single(lines) => SplitIter::single(lines.lines(width, height)),
 			Self::Horizontal(lines_list) => {
-				let line_widths = divide_into_intervals(width, lines_list.len());
+				let width_without_margins = width - (lines_list.len() - 1);
+				let line_widths = divide_into_intervals(width_without_margins, lines_list.len());
 				let lines = lines_list
 					.iter()
 					.zip(line_widths)
@@ -31,13 +39,14 @@ where
 				SplitIter::horizontal(lines)
 			}
 			Self::Vertical(lines_list) => {
-				let gine_heights = divide_into_intervals(height, lines_list.len());
+				let line_heights = divide_into_intervals(height, lines_list.len());
 				let lines = lines_list
 					.iter()
-					.zip(gine_heights)
+					.rev()
+					.zip(line_heights)
 					.map(|(into_lines, height)| into_lines.lines(width, height))
 					.collect();
-				SplitIter::vertical(lines)
+				SplitIter::vertical(lines, width)
 			}
 		}
 	}

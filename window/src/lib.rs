@@ -28,10 +28,6 @@ impl<C> Window<C> {
 		self.bg = Some(Color(r, g, b).into());
 		self
 	}
-
-	pub fn inner_mut(&mut self) -> &mut C {
-		&mut self.content
-	}
 }
 impl<'a, C> Lines for Window<&'a C>
 where

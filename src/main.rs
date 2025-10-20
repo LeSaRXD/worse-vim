@@ -13,11 +13,13 @@ fn main() {
 	let contents2 = read_lines();
 	let contents3 = read_lines();
 
-	let windows = vec![
+	let windows: Vec<Split<_>> = [
 		Window::new(&contents1).bg(10, 0, 30),
 		Window::new(&contents2).bg(30, 10, 0),
 		Window::new(&contents3).bg(0, 30, 10),
-	];
+	]
+	.map(Into::into)
+	.into();
 	let split = Split::Horizontal(windows);
 
 	display(&split);
@@ -35,7 +37,8 @@ where
 
 	{
 		let mut out = std::io::stdout().lock();
-		write!(out, "{}{}{}", ansi::Clear, lines.join("\n"), ansi::Home).ok();
+		use ansi::{Clear, Home};
+		write!(out, "{Clear}{}{Home}", lines.join("\n")).ok();
 		out.flush().ok();
 	}
 }
