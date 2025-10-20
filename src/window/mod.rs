@@ -30,12 +30,12 @@ impl<C> Window<C> {
 		&mut self.content
 	}
 }
-impl<'a, C> Lines for &'a Window<C>
+impl<'a, C> Lines for Window<&'a C>
 where
-	&'a C: IntoIterator<Item: AsRef<str>>,
+	&'a C: IntoIterator<Item: Into<String>>,
 {
 	type Line = String;
-	fn lines(self, width: usize, height: usize) -> impl Iterator<Item = Self::Line> {
+	fn lines(&self, width: usize, height: usize) -> impl Iterator<Item = Self::Line> {
 		Iter {
 			iter: self.content.into_iter(),
 			width,

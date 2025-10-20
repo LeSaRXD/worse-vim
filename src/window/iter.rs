@@ -9,7 +9,7 @@ pub struct Iter<I> {
 }
 impl<I> ExactSizeIterator for Iter<I>
 where
-	I: Iterator<Item: AsRef<str>>,
+	I: Iterator<Item: Into<String>>,
 {
 	fn len(&self) -> usize {
 		self.remaining_lines
@@ -17,7 +17,7 @@ where
 }
 impl<I> Iterator for Iter<I>
 where
-	I: Iterator<Item: AsRef<str>>,
+	I: Iterator<Item: Into<String>>,
 {
 	type Item = String;
 	fn next(&mut self) -> Option<Self::Item> {
@@ -26,7 +26,7 @@ where
 			let line = self
 				.iter
 				.next()
-				.map(|line| set_line_width(line.as_ref(), self.width))
+				.map(|line| set_line_width(&line.into(), self.width))
 				.unwrap_or_else(|| FILL_CHAR.repeat(self.width));
 			format!(
 				"{}{}{}\x1b[0m",

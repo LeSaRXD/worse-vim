@@ -1,5 +1,6 @@
 pub mod ansi;
 pub mod lines;
+pub mod split;
 pub mod window;
 
 use std::{
@@ -7,29 +8,36 @@ use std::{
 	time::Duration,
 };
 
-use crate::{lines::Lines, window::Window};
+use crate::{lines::Lines, split::Split, window::Window};
 
 const FILL_CHAR: &str = " ";
 const CONTROL_CHAR_WIDTH: usize = 2;
 const DEFAULT_SIZE: (usize, usize) = (80, 24);
 
 fn main() {
-	let contents = read_lines();
+	let contents1 = read_lines();
+	let contents2 = read_lines();
+	let contents3 = read_lines();
 
-	let mut window = Window::new(contents).bg(10, 0, 30);
+	let windows = vec![
+		Window::new(&contents1).bg(10, 0, 30),
+		Window::new(&contents2).bg(30, 10, 0),
+		Window::new(&contents3).bg(0, 30, 10),
+	];
+	let split = Split::Horizontal(windows);
 
-	display(&window);
+	display(&split);
 	std::thread::sleep(Duration::MAX);
 }
 
-fn display<'a, C>(win: &'a Window<C>)
+fn display<L>(into_lines: &L)
 where
-	&'a C: IntoIterator<Item: AsRef<str>>,
+	L: Lines<Line = String>,
 {
 	let (w, h) = termsize::get()
 		.map(|s| (s.cols as usize, s.rows as usize))
 		.unwrap_or(DEFAULT_SIZE);
-	let lines = win.lines(w, h).collect::<Vec<_>>();
+	let lines = into_lines.lines(w, h).collect::<Vec<_>>();
 
 	{
 		let mut out = std::io::stdout().lock();

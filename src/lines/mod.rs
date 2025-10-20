@@ -7,7 +7,7 @@ pub mod tests;
 
 pub trait Lines {
 	type Line;
-	fn lines(self, width: usize, height: usize) -> impl Iterator<Item = Self::Line>;
+	fn lines(&self, width: usize, height: usize) -> impl Iterator<Item = Self::Line>;
 }
 
 pub fn set_line_width(line: &str, width: usize) -> String {
