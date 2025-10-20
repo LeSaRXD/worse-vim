@@ -1,9 +1,10 @@
 use unicode_width::UnicodeWidthChar;
 
-use crate::{CONTROL_CHAR_WIDTH, FILL_CHAR};
-
 #[cfg(test)]
 pub mod tests;
+
+pub const FILL_CHAR: &str = " ";
+pub const CONTROL_CHAR_WIDTH: usize = 2;
 
 pub trait Lines {
 	type Line;

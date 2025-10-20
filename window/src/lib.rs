@@ -1,12 +1,15 @@
+mod split;
+pub use split::*;
 pub mod iter;
-use iter::Iter;
 
-use crate::{ansi::Color, lines::Lines};
+use ansi::{BgColor, Color, FgColor};
+use iter::Iter;
+use lines::Lines;
 
 pub struct Window<C> {
 	pub content: C,
-	pub bg: Option<Color>,
-	pub fg: Option<Color>,
+	pub bg: Option<BgColor>,
+	pub fg: Option<FgColor>,
 }
 
 impl<C> Window<C> {
@@ -18,11 +21,11 @@ impl<C> Window<C> {
 		}
 	}
 	pub fn fg(mut self, r: u8, g: u8, b: u8) -> Self {
-		self.fg = Some(Color(r, g, b));
+		self.fg = Some(Color(r, g, b).into());
 		self
 	}
 	pub fn bg(mut self, r: u8, g: u8, b: u8) -> Self {
-		self.bg = Some(Color(r, g, b));
+		self.bg = Some(Color(r, g, b).into());
 		self
 	}
 

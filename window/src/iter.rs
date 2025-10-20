@@ -1,11 +1,12 @@
-use crate::{FILL_CHAR, lines::set_line_width};
+use ansi::{BgColor, FgColor};
+use lines::{FILL_CHAR, set_line_width};
 
 pub struct Iter<I> {
 	pub(super) iter: I,
 	pub(super) width: usize,
 	pub(super) remaining_lines: usize,
-	pub(super) bg: Option<super::Color>,
-	pub(super) fg: Option<super::Color>,
+	pub(super) bg: Option<BgColor>,
+	pub(super) fg: Option<FgColor>,
 }
 impl<I> ExactSizeIterator for Iter<I>
 where
@@ -29,14 +30,11 @@ where
 				.map(|line| set_line_width(&line.into(), self.width))
 				.unwrap_or_else(|| FILL_CHAR.repeat(self.width));
 			format!(
-				"{}{}{}\x1b[0m",
-				self.bg
-					.map(|bg| format!("\x1b[48;2;{};{};{}m", bg.0, bg.1, bg.2))
-					.unwrap_or_default(),
-				self.fg
-					.map(|fg| format!("\x1b[38;2;{};{};{}m", fg.0, fg.1, fg.2))
-					.unwrap_or_default(),
-				line
+				"{}{}{}{}",
+				self.bg.map(|bg| bg.to_string()).unwrap_or_default(),
+				self.fg.map(|fg| fg.to_string()).unwrap_or_default(),
+				line,
+				ansi::Reset,
 			)
 		})
 	}

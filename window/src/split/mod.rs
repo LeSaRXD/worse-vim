@@ -4,7 +4,8 @@ mod tests;
 
 use std::iter::repeat_n;
 
-use crate::{lines::Lines, split::iter::SplitIter};
+use iter::SplitIter;
+use lines::Lines;
 
 pub enum Split<L> {
 	Single(L),

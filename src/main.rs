@@ -1,17 +1,11 @@
-pub mod ansi;
-pub mod lines;
-pub mod split;
-pub mod window;
-
 use std::{
 	io::{BufRead, Write},
 	time::Duration,
 };
 
-use crate::{lines::Lines, split::Split, window::Window};
+use lines::Lines;
+use window::{Split, Window};
 
-const FILL_CHAR: &str = " ";
-const CONTROL_CHAR_WIDTH: usize = 2;
 const DEFAULT_SIZE: (usize, usize) = (80, 24);
 
 fn main() {
@@ -41,7 +35,7 @@ where
 
 	{
 		let mut out = std::io::stdout().lock();
-		write!(out, "\x1b[2J{}\x1b[H", lines.join("\n")).ok();
+		write!(out, "{}{}{}", ansi::Clear, lines.join("\n"), ansi::Home).ok();
 		out.flush().ok();
 	}
 }
